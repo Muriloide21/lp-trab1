@@ -26,6 +26,7 @@ func main() {
 	//fmt.Println(vecPoint[0])
 	groups := lider(vecPoint, limit, dim)
 	sse := calcSSE(groups, dim)
+	writeOut(groups, dim)
 	fmt.Println(sse)
 }
 
@@ -110,7 +111,7 @@ func printGroups(groups [][]Point, tam int){
 func getLimit(fileName string) float64 {
 	file, err := os.Open(fileName)
 	if err != nil {
-		fmt.Println("DEU RUIM")
+		fmt.Println("Não foi possível abrir o arquivo")
 	}
 	var limit float64
 	n, err := fmt.Fscanln(file, &limit)
@@ -123,7 +124,7 @@ func getLimit(fileName string) float64 {
 func storePoints(fileName string) ([]Point, int) {
 	file, err := os.Open(fileName) //Abrindo arquivo
 	if err != nil {
-		fmt.Println("DEU RUIM")
+		fmt.Println("Não foi possível abrir o arquivo de entrada")
 	}
 
 	var i int
@@ -166,6 +167,30 @@ func storePoints(fileName string) ([]Point, int) {
 		i++
 	}
 	return vecPoint, dim
+}
+
+func writeOut(groups [][]Point, dim int) {
+	file2, err := os.Create("nossasaida.txt")
+	if err != nil {
+		fmt.Println("Não foi possível criar o arquivo de saída")
+	}
+	f := bufio.NewWriter(file2)
+	for i := 0; i < len(groups); i++ {
+		if i == 0 {
+			for _, pt := range groups[i] {
+				fmt.Fprintf(f, "%.0f ", pt[dim])
+			}
+			fmt.Fprintln(f)
+		}else {
+			fmt.Fprintln(f)
+			for _, pt := range groups[i] {
+				fmt.Fprintf(f, "%.0f ", pt[dim])
+			}
+			fmt.Fprintln(f)
+		}
+		
+	}
+	f.Flush()
 }
 
 func printSlice(s []Point) {
